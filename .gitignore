@@ -1,0 +1,15 @@
+# Python
+*.pyc
+__pycache__/
+env/
+.venv/
+*.sqlite3
+
+# VSCode
+.vscode/
+
+# OS files
+.DS_Store
+
+# Env & Secrets
+.env
