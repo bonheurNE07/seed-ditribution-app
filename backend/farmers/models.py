@@ -20,7 +20,7 @@ class Cell(models.Model):
         return f"#{self.country} ~ {self.cellule_name} - {self.sector}, {self.district}, {self.province}"
 
 class Village(models.Model):
-    cell = models.ForeignKey(Cell, on_delete=models.CASCADE, related_name='villages')
+    cell = models.ForeignKey("Cell", on_delete=models.CASCADE, related_name='villages')
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -33,9 +33,24 @@ class Farmer(models.Model):
     birth_date = models.DateField()
     sex = models.CharField(max_length=1, choices=SEX_CHOICES)
     phone_number = models.CharField(max_length=20)
-    location = models.ForeignKey(Village, on_delete=models.SET_NULL, null=True)
+    location = models.ForeignKey("Village", on_delete=models.SET_NULL, null=True)
     registered_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.full_name
+
+class Species(models.Model):
+    name = models.CharField(max_length=300, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
     
+class SeedDistribution(models.Model):
+    farmer = models.ForeignKey("Farmer", on_delete=models.CASCADE, related_name="distributions")
+    species = models.ForeignKey("Species", on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    distributed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.farmer.full_name} - {self.species.name} ({self.quantity})"
