@@ -9,11 +9,9 @@ from .models import Species, SeedDistribution, Cell, Farmer, Village
 from .serializers import (
     SpeciesSerializer, SeedDistributionSerializer, FarmerSerializer,
     CellSerializer, VillegeSerializer)
-from permissions import IsAdmin, IsAgent
 
-class RegisterView(APIView):
-    def post(self, request):
-        email = r
+from .permissions import IsAdmin, IsAgent
+
 
 class SpeciesViewSet(viewsets.ModelViewSet):
     queryset = Species.objects.all()

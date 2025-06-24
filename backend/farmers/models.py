@@ -1,3 +1,5 @@
+import uuid
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -6,8 +8,21 @@ SEX_CHOICES = [
     ('F', 'Female'),
 ]
 
+class RegistrationCode(models.Model):
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=20)
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timezone.timedelta(minutes=20)
+    
+    def __str__(self):
+        return f"{self.email} - {self.code}"
+
 class UserProfile(models.Model):
-    user = models.OneToOneRel(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20)
     is_email_verified = models.BooleanField(default=False)
 
