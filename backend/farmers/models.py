@@ -1,10 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 SEX_CHOICES = [
     ('M', 'Male'),
     ('F', 'Female'),
 ]
 
+class UserProfile(models.Model):
+    user = models.OneToOneRel(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=20)
+    is_email_verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.email
 class Cell(models.Model):
     cell_id = models.PositiveIntegerField()
     country = models.CharField(max_length=200)

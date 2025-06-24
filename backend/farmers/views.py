@@ -1,11 +1,19 @@
+from django.contrib.auth.models import User
+
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Species, SeedDistribution, Cell, Farmer, Village
 from .serializers import (
     SpeciesSerializer, SeedDistributionSerializer, FarmerSerializer,
     CellSerializer, VillegeSerializer)
-from rest_framework.permissions import IsAuthenticated
-
 from permissions import IsAdmin, IsAgent
+
+class RegisterView(APIView):
+    def post(self, request):
+        email = r
 
 class SpeciesViewSet(viewsets.ModelViewSet):
     queryset = Species.objects.all()
