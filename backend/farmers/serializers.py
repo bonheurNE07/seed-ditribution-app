@@ -2,17 +2,17 @@ from rest_framework import serializers
 from .models import Farmer, Species, SeedDistribution, Cell, Village
 
 class FarmerSerializer(serializers.ModelSerializer):
-    class Met:
+    class Meta:
         model = Farmer
         fields = "__all__"
 
 class CellSerializer(serializers.ModelSerializer):
-    class Met:
+    class Meta:
         model = Cell
         fields = "__all__"
 
 class VillegeSerializer(serializers.ModelSerializer):
-    class Met:
+    class Meta:
         model = Village
         fields = "__all__"
 
