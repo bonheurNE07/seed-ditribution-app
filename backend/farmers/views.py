@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 
 from .models import Species, SeedDistribution, Cell, Farmer, Village
 from .serializers import (
@@ -38,3 +38,15 @@ class SeedDistributionViewSet(viewsets.ModelViewSet):
     queryset = SeedDistribution.objects.all()
     serializer_class = SeedDistributionSerializer
     permission_classes = [IsAuthenticated, IsAdmin, IsAgent]
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAgent, IsAdmin])
+def lookup_farmer_by_qr(request):
+    national_id =  request.data.get("national_id")
+    try:
+        farmer = Farmer.objects.get(national_id=national_id)
+        serializer = FarmerSerializer(farmer)
+        return Response(serializer.data)
+    except Farmer.DoesNotExist:
+        return Response({'error': 'Farmer not found'}, status=404)

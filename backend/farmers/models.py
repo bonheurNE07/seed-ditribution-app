@@ -1,4 +1,7 @@
 import uuid
+import qrcode
+from io import BytesIO
+from django.core.files import File
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
@@ -58,10 +61,20 @@ class Farmer(models.Model):
     phone_number = models.CharField(max_length=20)
     location = models.ForeignKey("Village", on_delete=models.SET_NULL, null=True)
     registered_at = models.DateTimeField(auto_now_add=True)
+    qr_code = models.ImageField(upload_to='qrcodes/', null=True, blank=True)
+    
 
     def __str__(self):
         return self.full_name
-
+    
+    def generate_qr_code(self):
+        qr_data = f"{self.national_id}"
+        qr_img = qrcode.make(qr_data)
+        buffer = BytesIO()
+        qr_img.save(buffer, format="PNG")
+        file_name = f"{self.full_name}-{self.national_id}_qr.png"
+        self.qr_code.save(file_name, File(buffer), save=False)
+        
 class Species(models.Model):
     name = models.CharField(max_length=300, unique=True)
     description = models.TextField(blank=True)
