@@ -82,11 +82,18 @@ class Species(models.Model):
     def __str__(self):
         return self.name
     
-class SeedDistribution(models.Model):
+class Distribution(models.Model):
     farmer = models.ForeignKey("Farmer", on_delete=models.CASCADE, related_name="distributions")
-    species = models.ForeignKey("Species", on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     distributed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.farmer.full_name} - {self.species.name} ({self.quantity})"
+        return f"{self.farmer.full_name} on {self.distributed_at.date()}"
+
+class DistributedItem(models.Model):
+    distribution = models.ForeignKey(Distribution, on_delete=models.CASCADE, related_name="items")
+    species = models.ForeignKey("Species", on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.species.name} x {self.quantity}"
