@@ -1,13 +1,14 @@
 from django.contrib.auth.models import User
 
 from rest_framework import viewsets
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .models import Species, SeedDistribution, Cell, Farmer, Village
+from .models import Species, Distribution, Cell, Farmer, Village
 from .serializers import (
-    SpeciesSerializer, SeedDistributionSerializer, FarmerSerializer,
+    SpeciesSerializer, DistributionSerializer, FarmerSerializer,
     CellSerializer, VillegeSerializer)
 
 from .permissions import IsAdmin, IsAgent
@@ -33,11 +34,14 @@ class VillageViewSet(viewsets.ModelViewSet):
     serializer_class = VillegeSerializer
     permission_classes = [IsAuthenticated, IsAdmin, IsAgent]
 
+class DistributionCreateView(generics.CreateAPIView):
+    queryset = Distribution.objects.all()
+    serializer_class = DistributionSerializer
+    permission_classes = [IsAuthenticated, IsAgent]  # or IsAdmin too
 
-class SeedDistributionViewSet(viewsets.ModelViewSet):
-    queryset = SeedDistribution.objects.all()
-    serializer_class = SeedDistributionSerializer
-    permission_classes = [IsAuthenticated, IsAdmin, IsAgent]
+    def perform_create(self, serializer):
+        serializer.save(agent=self.request.user)
+
 
 
 @api_view(['POST'])
