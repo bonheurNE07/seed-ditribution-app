@@ -55,3 +55,10 @@ class DistributionHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Distribution
         fields = ['distributed_at', 'agent_name', 'items']
+
+class RecentFarmerSerializer(serializers.ModelSerializer):
+    province = serializers.CharField(source="location.cell.province")
+
+    class Meta:
+        model = Farmer
+        fields = ['id', 'full_name', 'national_id', 'phone_number', 'province', 'registreted_at']

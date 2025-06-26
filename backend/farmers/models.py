@@ -62,7 +62,7 @@ class Farmer(models.Model):
     location = models.ForeignKey("Village", on_delete=models.SET_NULL, null=True)
     qr_code = models.ImageField(upload_to='qrcodes/', null=True, blank=True)
     is_verified = models.BooleanField(default=False)
-    registered_at = models.DateTimeField(auto_now_add=True)
+    registreted_at = models.DateTimeField(auto_now_add=True)
 
     
 

@@ -12,7 +12,8 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Species, Distribution, DistributedItem, Cell, Farmer, Village
 from .serializers import (
     SpeciesSerializer, DistributionSerializer, FarmerSerializer,
-    CellSerializer, VillegeSerializer, DistributionHistorySerializer)
+    CellSerializer, VillegeSerializer, DistributionHistorySerializer,
+    RecentFarmerSerializer)
 
 from .permissions import IsAdmin, IsAgent
 
@@ -99,3 +100,10 @@ def dashboard_stats(request):
         'total_species': total_species,
         'pending_verifications': pending_verifications
     })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recent_farmers(request):
+    farmes = Farmer.objects.select_related('location__cell').order_by('-registreted_at')[:10]
+    serializer = RecentFarmerSerializer(farmes, many=True)
+    return Response(serializer.data)
