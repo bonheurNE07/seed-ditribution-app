@@ -40,3 +40,18 @@ class DistributionSerializer(serializers.ModelSerializer):
         for item in items_data:
             DistributedItem.objects.create(distribution=distribution, **item)
         return distribution
+
+class DistributedItemReadSerializer(serializers.ModelSerializer):
+    species_name = serializers.CharField(source='species.name', read_only=True)
+
+    class Meta:
+        model = DistributedItem
+        fields = ['species_name', 'quantity']
+
+class DistributionHistorySerializer(serializers.ModelSerializer):
+    items = DistributedItemReadSerializer(many=True)
+    agent_name = serializers.CharField(source='agent.username', read_only=True)
+
+    class Meta:
+        model = Distribution
+        fields = ['distributed_at', 'agent_name', 'items']
