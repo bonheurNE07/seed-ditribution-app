@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Species, Distribution, Cell, Farmer, Village
 from .serializers import (
     SpeciesSerializer, DistributionSerializer, FarmerSerializer,
-    CellSerializer, VillegeSerializer)
+    CellSerializer, VillegeSerializer, DistributionHistorySerializer)
 
 from .permissions import IsAdmin, IsAgent
 
@@ -51,6 +51,17 @@ def lookup_farmer_by_qr(request):
     try:
         farmer = Farmer.objects.get(national_id=national_id)
         serializer = FarmerSerializer(farmer)
+        return Response(serializer.data)
+    except Farmer.DoesNotExist:
+        return Response({'error': 'Farmer not found'}, status=404)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def farmer_distribution_history(request, farmer_id):
+    try:
+        farmer = Farmer.objects.get(pk=farmer_id)
+        distributions = Distribution.objects.filter(farmer=farmer).order_by('-distributed_at')
+        serializer = DistributionHistorySerializer(distributions, many=True)
         return Response(serializer.data)
     except Farmer.DoesNotExist:
         return Response({'error': 'Farmer not found'}, status=404)
