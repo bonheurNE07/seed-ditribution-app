@@ -4,7 +4,8 @@ from .views import (SpeciesViewSet, DistributionCreateView,
                     FarmerViewSet, CellViewSet, VillageViewSet,
                     lookup_farmer_by_qr, farmer_distribution_history,
                     download_distribution_pdf, dashboard_stats, 
-                    recent_farmers, recent_distributions)
+                    recent_farmers, recent_distributions,
+                    distribution_calendar)
 
 router = DefaultRouter()
 router.register(r'species', SpeciesViewSet)
@@ -21,5 +22,5 @@ urlpatterns = [
     path('dashboard/stats/', dashboard_stats, name='dashboard_stats'),
     path('dashboard/recent-farmers/', recent_farmers, name='recent_farmers'),
     path('dashboard/recent-distributions/', recent_distributions, name='recent_distributions'),
-
+    path('dashboard/distribution-calendar/', distribution_calendar, name='distribution_calendar'),
 ]

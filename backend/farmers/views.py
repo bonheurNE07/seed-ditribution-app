@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.http import FileResponse
 from django.utils.timezone import now
+from django.utils.dateparse import parse_date
 from django.db.models import Sum
+from django.db.models.functions import TruncDay
 
 from rest_framework import viewsets
 from rest_framework import generics
@@ -115,3 +119,24 @@ def recent_distributions(request):
         .prefetch_related('items__species').order_by('-distributed_at')[:10]
     serializer = RecentDistributionSerializer(recent, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def distribution_calendar(request):
+    # Consider the current month as default
+    month_str = request.GET.get('month', datetime.now().strftime('%Y-%m'))
+    year, month = map(int, month_str.split('-'))
+
+    distributions = DistributedItem.objects.filter(
+        distribution__distributed_at__year=year,
+        distribution__distributed_at__month=month
+    ).annotate(
+        day=TruncDay('distribution__distributed_at')
+    ).values('day').annotate(
+        total=Sum('quantity')
+    ).order_by('day')
+
+    return Response({
+        item['day'].strftime('%Y-%m-%d'): item['total']
+        for item in distributions
+    })
