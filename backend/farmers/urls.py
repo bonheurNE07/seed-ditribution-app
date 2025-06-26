@@ -3,7 +3,9 @@ from rest_framework.routers import DefaultRouter
 from .views import (SpeciesViewSet, DistributionCreateView, 
                     FarmerViewSet, CellViewSet, VillageViewSet,
                     lookup_farmer_by_qr, farmer_distribution_history,
-                    download_distribution_pdf)
+                    download_distribution_pdf, dashboard_stats, 
+                    recent_farmers, recent_distributions,
+                    distribution_calendar)
 
 router = DefaultRouter()
 router.register(r'species', SpeciesViewSet)
@@ -17,4 +19,8 @@ urlpatterns = [
     path('lookup_farmer_by_qr/', lookup_farmer_by_qr, name='lookup_farmer'),
     path('farmers/<int:farmer_id>/history/', farmer_distribution_history, name='farmer_history'),
     path('distributions/<int:distribution_id>/pdf/', download_distribution_pdf, name='distribution_pdf'),
+    path('dashboard/stats/', dashboard_stats, name='dashboard_stats'),
+    path('dashboard/recent-farmers/', recent_farmers, name='recent_farmers'),
+    path('dashboard/recent-distributions/', recent_distributions, name='recent_distributions'),
+    path('dashboard/distribution-calendar/', distribution_calendar, name='distribution_calendar'),
 ]
