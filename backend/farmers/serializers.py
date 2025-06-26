@@ -62,3 +62,23 @@ class RecentFarmerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Farmer
         fields = ['id', 'full_name', 'national_id', 'phone_number', 'province', 'registreted_at']
+    
+
+class DistributedItemSummarySerializer(serializers.ModelSerializer):
+    species_name = serializers.CharField(source='species.name')
+
+    class Meta:
+        model = DistributedItem
+        fields = ['species_name', 'quantity']
+
+class RecentDistributionSerializer(serializers.ModelSerializer):
+    farmer_name = serializers.CharField(source='farmer.full_name')
+    village = serializers.CharField(source='farmer.location.name')
+    sector = serializers.CharField(source='farmer.location.cell.sector')
+    district = serializers.CharField(source='farmer.location.cell.district')
+    province = serializers.CharField(source='farmer.location.cell.province')
+    items = DistributedItemSummarySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Distribution
+        fields = ['farmer_name', 'items', 'distributed_at', 'village', 'sector', 'district', 'province']

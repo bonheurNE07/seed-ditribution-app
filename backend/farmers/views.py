@@ -13,7 +13,7 @@ from .models import Species, Distribution, DistributedItem, Cell, Farmer, Villag
 from .serializers import (
     SpeciesSerializer, DistributionSerializer, FarmerSerializer,
     CellSerializer, VillegeSerializer, DistributionHistorySerializer,
-    RecentFarmerSerializer)
+    RecentFarmerSerializer, RecentDistributionSerializer)
 
 from .permissions import IsAdmin, IsAgent
 
@@ -106,4 +106,12 @@ def dashboard_stats(request):
 def recent_farmers(request):
     farmes = Farmer.objects.select_related('location__cell').order_by('-registreted_at')[:10]
     serializer = RecentFarmerSerializer(farmes, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recent_distributions(request):
+    recent = Distribution.objects.select_related('farmer__location__cell')\
+        .prefetch_related('items__species').order_by('-distributed_at')[:10]
+    serializer = RecentDistributionSerializer(recent, many=True)
     return Response(serializer.data)
