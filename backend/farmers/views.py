@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.http import FileResponse
 
 from rest_framework import viewsets
 from rest_framework import generics
@@ -12,6 +13,8 @@ from .serializers import (
     CellSerializer, VillegeSerializer, DistributionHistorySerializer)
 
 from .permissions import IsAdmin, IsAgent
+
+from .utils.pdf_generator import generate_distribution_pdf
 
 
 class SpeciesViewSet(viewsets.ModelViewSet):
@@ -65,3 +68,13 @@ def farmer_distribution_history(request, farmer_id):
         return Response(serializer.data)
     except Farmer.DoesNotExist:
         return Response({'error': 'Farmer not found'}, status=404)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_distribution_pdf(request, distribution_id):
+    try:
+        distribution = Distribution.objects.get(pk=distribution_id)
+        pdf = generate_distribution_pdf(distribution)
+        return FileResponse(open(pdf.name, 'rb'), content_type='application/pdf')
+    except Distribution.DoesNotExist:
+        return Response({'error': 'Distribution not found'}, status=404)
