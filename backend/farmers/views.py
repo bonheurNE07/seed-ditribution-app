@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.http import FileResponse
+from django.utils.timezone import now
+from django.db.models import Sum
 
 from rest_framework import viewsets
 from rest_framework import generics
@@ -7,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .models import Species, Distribution, Cell, Farmer, Village
+from .models import Species, Distribution, DistributedItem, Cell, Farmer, Village
 from .serializers import (
     SpeciesSerializer, DistributionSerializer, FarmerSerializer,
     CellSerializer, VillegeSerializer, DistributionHistorySerializer)
@@ -78,3 +80,22 @@ def download_distribution_pdf(request, distribution_id):
         return FileResponse(open(pdf.name, 'rb'), content_type='application/pdf')
     except Distribution.DoesNotExist:
         return Response({'error': 'Distribution not found'}, status=404)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dashboard_stats(request):
+    today = now().date()
+
+    total_farmers = Farmer.objects.count()
+    seeds_today = DistributedItem.objects.filter(
+        distribution__distributed_at__date=today
+    ).aggregate(total=Sum('quantity'))['total'] or 0
+    total_species = Species.objects.count()
+    pending_verifications = Farmer.objects.filter(is_verified=False).count()
+
+    return Response({
+        'total_farmers': total_farmers,
+        'seeds_distributed_today': seeds_today,
+        'total_species': total_species,
+        'pending_verifications': pending_verifications
+    })
