@@ -20,9 +20,8 @@ A professional-grade application for environmental organizations (e.g., One Acre
 | Folder/File     | Purpose                                      |
 |------------------|----------------------------------------------|
 | `backend/`       | Django app + API logic                      |
-| `frontend/`      | React + Tailwind UI (designed and done)     |
 | `docs/`          | Technical diagrams, architecture, notes     |
-| `scripts/`       | Deployment and automation scripts (optional)|
+| `scripts/`       | Deployment and automation scripts           |
 | `.gitignore`     | Ignoring virtualenv, DB, etc.               |
 
 ---
@@ -49,7 +48,7 @@ python manage.py createsuperuser
 
 # Run server
 python manage.py runserver
-
+```
 ---
 
 ## 🔐 Authentication Flow
@@ -69,8 +68,8 @@ python manage.py runserver
 - /api/dashboard/recent-distributions/
 - /api/dashboard/distribution-calendar/
 - /api/farmers/, /api/species/, /api/distributions/ – Core modules
-
-# Full API documentation coming soon via docs/.
+```
+📌 Full API documentation coming soon via docs/.
 
 ---
 
@@ -85,4 +84,4 @@ python manage.py runserver
 ## 👨‍💻 Author
 
 Emmanuel Ndeze
-Passionate software engineer focused on solving environmental and rural challenges with code.
+Passionate software engineer focused on solving environmental and social challenges with code.
